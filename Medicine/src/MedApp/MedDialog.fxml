@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="MedApp.DialogController" stylesheets="@styles.css"
+            styleClass="dialog">
+
+    <header>
+        <Text textAlignment="CENTER" fx:id="headerText"/>
+    </header>
+
+    <content>
+
+        <GridPane hgap="15" vgap="7">
+            <HBox GridPane.rowIndex="0" GridPane.columnSpan="2">
+                <Separator HBox.hgrow="ALWAYS" styleClass="separator"/>
+                <padding>
+                    <Insets bottom="5"/>
+                </padding>
+            </HBox>
+            <Label text="Medicine name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="medNameField" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                       styleClass="text-fields-dialog"/>
+            <Label text="Price:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="medPriceField" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                       styleClass="text-fields-dialog"/>
+            <Label text="Quantity:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <Spinner fx:id="quantitySpinner" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                     min="0" max="100" editable="true" id="spinner"/>
+        </GridPane>
+    </content>
+
+</DialogPane>

@@ -1,0 +1,39 @@
+        Dialog<ButtonType> dialog = new Dialog<>();
+        // specifies the owner of the dialog - the top-level window
+        dialog.initOwner(borderPane.getScene().getWindow());
+//        dialog.setTitle("Add new medicine");
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("MedDialog.fxml"));
+        try {
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+        } catch(IOException e) {
+            System.out.println("Couldn't load dialog: " + e.getMessage());
+        }
+
+        DialogController dialogController = fxmlLoader.getController();
+        dialogController.displayDialog(this, dialog);
+
+
+
+//        // not just add buttons and listen but actually display the dialog with .showAndWait()
+//        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+//        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+//        dialog.getDialogPane().getStylesheets().add(
+//                "com/MedicineLSN/styles.css");
+//        dialog.getDialogPane().lookupButton(ButtonType.OK).getStyleClass().add("button1");
+//        dialog.getDialogPane().lookupButton(ButtonType.CANCEL).getStyleClass().add("button1");
+
+//        DialogController dialogController = fxmlLoader.getController();
+//        final Button btOK = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+//        btOK.addEventFilter(ActionEvent.ACTION, actionEvent -> {
+//            Medicine newMed = dialogController.processInput();
+//            if (newMed!=null) {
+//                app.addNewMedicine(newMed);
+//                medicineListView.getSelectionModel().select(newMed);
+//            } else {
+//                actionEvent.consume();
+//            }
+//        });
+//        Optional<ButtonType> result = dialog.showAndWait();
+    }

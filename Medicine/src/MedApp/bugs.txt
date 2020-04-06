@@ -1,0 +1,10 @@
+1. Bug when saving a new medicine with the name of an existing one.
+    Exact case:
+        When trying to save a new medicine with the Name of an existing one and
+        with a different price.
+    What happens:
+        Initially, the main text area shows the new price. It also shows only the
+        quantity provided by the new medicine request.
+        After selecting another medicine from the search list and then going back
+        to this one, however, it shows the old price but now with incremented
+        quantity.

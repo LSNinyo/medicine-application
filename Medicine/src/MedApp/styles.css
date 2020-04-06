@@ -1,0 +1,94 @@
+.root{
+    -fx-font-size: 16pt;
+    -fx-font-family: "Times";
+    /*-fx-base: rgb(132, 145, 47);*/
+    -fx-base: rgb(42, 51, 12);
+    /*-fx-background: rgb(225, 228, 203);*/
+    /*-fx-background: rgb(52, 54, 45);*/
+    -fx-background: rgb(245, 242, 193);
+}
+
+.border-basket{
+    -fx-border-color: rgb(103, 100, 78);
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+}
+
+.button1{
+    -fx-font-size: 13pt;
+}
+
+.button2{
+    -fx-background-color: rgb(136, 148, 89);
+    -fx-font-size: 13pt;
+    -fx-text-fill: black;
+}
+
+.med-search{
+    -fx-font-size: 13pt;
+}
+
+.basket-list{
+    -fx-font-size: 14pt;
+}
+
+.separator .line{
+    -fx-border-color: black;
+    -fx-border-width: 0.5;
+}
+
+.border-right{
+    -fx-border-color: rgb(103, 100, 78);
+    -fx-border-style: hidden none none solid;
+    -fx-padding: 8;
+}
+
+.dialog{
+    -fx-font-size: 13pt;
+    -fx-font-family: "Times";
+    -fx-base: rgb(132, 145, 47);
+    -fx-background: rgb(225, 228, 203);
+}
+
+.header{
+    -fx-font-size: 13pt;
+    -fx-font-family: "Times";
+    -fx-base: rgb(132, 145, 47);
+    -fx-background: rgb(225, 228, 203);
+}
+.text-fields-dialog{
+    -fx-font-size: 11pt;
+}
+
+#spinner {
+    -fx-font-size: 11pt;
+}
+
+#delete-button{
+    -fx-background-color: rgb(210,70,70);
+}
+
+
+
+
+.border-total{
+    /*-fx-border-color: rgb(103, 100, 78);*/
+    -fx-border-bottom-style: solid;
+    -fx-border-color: rgb(103, 100, 78);
+    -fx-border-bottom-width: 1;
+}
+
+
+
+/*
+#gridPane {
+    -fx-border-color: grey;
+    -fx-border-width: 2;
+}
+#medicineName {
+    -fx-font-size: 20px;
+}
+.medicineElements {
+    -fx-font-size: 18px;
+}
+*/
