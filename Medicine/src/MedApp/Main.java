@@ -29,20 +29,11 @@ public class Main extends Application {
 
     @Override
     public void init() {
-        try {
-            InventoryData.getInstance().loadMedicine();
-        } catch (IOException e) {
-            System.out.println("Problem loading medicine: " + e.getMessage());
-        }
+        InventoryData.getInstance().loadMedicine();
     }
 
     @Override
     public void stop() {
-        try {
-            InventoryData.getInstance().storeMedicine();
-            DailyLog.getInstance().writeToFile();
-        } catch (IOException e) {
-            System.out.println("Problem storing medicine: " + e.getMessage());
-        }
+        InventoryData.getInstance().updateInventory();
     }
 }

@@ -37,3 +37,47 @@
 //        });
 //        Optional<ButtonType> result = dialog.showAndWait();
     }
+
+
+
+    Path path = Paths.get(dataFile);
+    //        BufferedWriter bw = Files.newBufferedWriter(path);
+    //
+    //        try {
+    //            Iterator<Medicine> iterator = inventory.iterator();
+    //            while (iterator.hasNext()) {
+    //                Medicine medicine = iterator.next();
+    //                String price = medicine.getPrice() +"";
+    //                String quantity = medicine.getQuantity() + "";
+    //                bw.write(String.format("%s;\t%s;\t%s",
+    //                        medicine.getName(), price, quantity));
+    //                bw.newLine();
+    //            }
+    //        } finally {
+    //            if (bw!=null) {
+    //                bw.close();
+    //            }
+    //        }
+
+
+    //        inventory = FXCollections.observableArrayList();
+    //        Path path = Paths.get(dataFile);
+    //        BufferedReader br = Files.newBufferedReader(path);
+    //
+    //        String text;
+    //
+    //        try {
+    //            while ( (text=br.readLine()) != null) {
+    //                String[] medicinePieces = text.split(";\t");
+    //                String name = medicinePieces[0];
+    //                double price = Double.parseDouble(medicinePieces[1]);
+    //                int quantity = Integer.parseInt(medicinePieces[2]);
+    //
+    //                Medicine medicine = new Medicine(name, price, quantity);
+    //                inventory.add(medicine);
+    //            }
+    //        } finally {
+    //            if (br!=null) {
+    //                br.close();
+    //            }
+    //        }

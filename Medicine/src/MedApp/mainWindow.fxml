@@ -15,19 +15,34 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <BorderPane fx:controller="MedApp.ControllerMain"
             xmlns:fx="http://javafx.com/fxml" stylesheets="@styles.css"
             fx:id="borderPane">
 
     <top>
-        <ToolBar styleClass="button1">
-            <ToggleButton text="Inventory" fx:id="inventoryToggleButton" onAction="#handleInventoryPressed"
-                styleClass="button2"/>
-            <Button text="New" fx:id="newButton" onAction="#showNewDialog" styleClass="button2"/>
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Button text="Edit" alignment="CENTER_RIGHT" onAction="#showEditDialog" styleClass="button2"/>
-            <Button text="Delete" onAction="#deleteMed" id="delete-button"/>
-        </ToolBar>
+        <VBox>
+            <MenuBar styleClass="button1">
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="New"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Edit"/>
+                    </items>
+                </Menu>
+            </MenuBar>
+            <ToolBar styleClass="button1">
+                <ToggleButton text="Inventory" fx:id="inventoryToggleButton" onAction="#handleInventoryPressed"
+                    styleClass="button2"/>
+                <Button text="New" fx:id="newButton" onAction="#showNewDialog" styleClass="button2"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button text="Edit" alignment="CENTER_RIGHT" onAction="#showEditDialog" styleClass="button2"/>
+                <Button text="Delete" onAction="#deleteMed" id="delete-button"/>
+            </ToolBar>
+        </VBox>
     </top>
 
     <left>

@@ -43,11 +43,15 @@ public class TestMain {
         DailyLog.getInstance().addToSoldList(new Medicine("B", 2.3, 4));
         DailyLog.getInstance().printList();
         DailyLog.getInstance().writeToFile();
+
+
 //        dlTest.addToSoldList(new Medicine("A", 2.2, 3));
 //        dlTest.addToSoldList(new Medicine("asdasdsad", 2.2, 4));
 //        dlTest.addToSoldList(new Medicine("C", 2.2, 7));
 //        dlTest.addToSoldList(new Medicine("A quite long name", 2.2, 1));
 //        dlTest.writeToFile();
+
+
 
     }
 

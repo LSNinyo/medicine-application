@@ -3,19 +3,17 @@ package MedApp.datamodel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
+import java.util.ArrayList;
 
 public class InventoryData {
 
     private static InventoryData instance = new InventoryData();
-    private static String dataFile = "Inventory.txt";
     private ObservableList<Medicine> inventory = FXCollections.observableArrayList();
+    // The quantities of the medicines stored in toBeUpdated are the
+    // amounts which should be incremented!
+    private ArrayList<Medicine> toBeUpdated = new ArrayList<>();
+
+    private int qtyChangeCount = 0;
 
     public static InventoryData getInstance() {
         return instance;
@@ -23,6 +21,101 @@ public class InventoryData {
 
     public ObservableList<Medicine> getInventory() {
         return inventory;
+    }
+
+
+    /**
+     * If the medicine provided is completely new - it adds it
+     * to the inventory. If it's already existing - it just
+     * increases its quantity.
+     */
+    public void addMedicine(Medicine newMedicine) {
+        Medicine correspondingMedicine = inInventory(newMedicine);
+        if (correspondingMedicine != null) {
+            correspondingMedicine.increaseQuantity(newMedicine.getQuantity());
+        } else {
+            inventory.add(newMedicine);
+            Database.insertMed(newMedicine);
+        }
+    }
+
+    /**
+     * Removes medicine from inventory by looking at the name.
+     */
+    public void removeMedicine(Medicine medicine) {
+        inventory.removeIf(med -> med.getName().equals(medicine.getName()));
+        Database.deleteMed(medicine);
+    }
+
+    public boolean decreaseQuantity(Medicine medicine, int amount) {
+        if (inInventory(medicine) != null && medicine.getQuantity()>=amount) {
+            medicine.decreaseQuantity(amount);
+
+            addToUpdate(new Medicine(medicine.getName(), medicine.getPrice(), -amount));
+            updateQtyCount();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean increaseQuantity(Medicine medicine, int amount) {
+        if (inInventory(medicine) != null) {
+            medicine.increaseQuantity(amount);
+
+            addToUpdate(new Medicine(medicine.getName(), medicine.getPrice(), amount));
+            updateQtyCount();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void editMedicine(Medicine oldMed, Medicine editedMed) {
+        removeMedicine(oldMed);
+        addMedicine(editedMed);
+        Database.editMed(oldMed, editedMed);
+    }
+
+    /**
+     * Loads the saved medicines into an observable
+     * arrayList.
+     */
+    public void loadMedicine() {
+        ArrayList<Medicine> invFromDB = Database.load();
+        inventory.addAll(invFromDB);
+
+    }
+
+    /**
+     * Passes the toBeUpdated list to the DB and also empties it.
+     */
+    public void updateInventory() {
+        Database.updateQuantities(toBeUpdated);
+        toBeUpdated.clear();
+    }
+
+    /**
+     * Adds the passed medicine to the toBeUpdated ArrayList.
+     * The quantity of the passed medicine is how much the
+     * medicine quantity needs to change. If the number is
+     * negative - then the quantity reduces.
+     */
+    private void addToUpdate(Medicine med) {
+        int upMedIndex = -1;
+        int oldQty=0;
+        for (int i=0; i<toBeUpdated.size(); i++) {
+            Medicine upMed = toBeUpdated.get(i);
+            if (upMed.getName().equals(med.getName())) {
+                upMedIndex = i;
+                oldQty = upMed.getQuantity();
+            }
+        }
+        if (upMedIndex>=0) {
+            toBeUpdated.add(upMedIndex, new Medicine(med.getName(), med.getPrice(), med.getQuantity()+oldQty));
+        } else {
+            toBeUpdated.add(med);
+        }
     }
 
     /**
@@ -43,92 +136,16 @@ public class InventoryData {
     }
 
     /**
-     * If the medicine provided is completely new - it adds it
-     * to the inventory. If it's already existing - it just
-     * increases its quantity.
+     * Increments the qtyChangeCount by one. If it
+     * reaches 6, it calls the updateInventory() and
+     * resets the counter.
      */
-    public void addMedicine(Medicine newMedicine) {
-        Medicine correspondingMedicine = inInventory(newMedicine);
-        if (correspondingMedicine != null) {
-            correspondingMedicine.increaseQuantity(newMedicine.getQuantity());
-        } else {
-            inventory.add(newMedicine);
-        }
-    }
+    private void updateQtyCount() {
+        qtyChangeCount++;
 
-    /**
-     * Removes medicine from inventory by looking at the name.
-     */
-    public void removeMedicine(Medicine medicine) {
-        inventory.remove(medicine);
-    }
-
-    public boolean decreaseQuantity(Medicine medicine, int amount) {
-        if (inInventory(medicine) != null && medicine.getQuantity()>=amount) {
-            medicine.decreaseQuantity(amount);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean increaseQuantity(Medicine medicine, int amount) {
-        if (inInventory(medicine) != null) {
-            medicine.increaseQuantity(amount);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void editMedicine(Medicine oldMed, Medicine editedMed) {
-        removeMedicine(oldMed);
-        addMedicine(editedMed);
-    }
-
-    public void loadMedicine() throws IOException {
-        inventory = FXCollections.observableArrayList();
-        Path path = Paths.get(dataFile);
-        BufferedReader br = Files.newBufferedReader(path);
-
-        String text;
-
-        try {
-            while ( (text=br.readLine()) != null) {
-                String[] medicinePieces = text.split(";\t");
-                String name = medicinePieces[0];
-                double price = Double.parseDouble(medicinePieces[1]);
-                int quantity = Integer.parseInt(medicinePieces[2]);
-
-                Medicine medicine = new Medicine(name, price, quantity);
-                inventory.add(medicine);
-            }
-        } finally {
-            if (br!=null) {
-                br.close();
-            }
-        }
-
-    }
-
-    public void storeMedicine() throws IOException {
-        Path path = Paths.get(dataFile);
-        BufferedWriter bw = Files.newBufferedWriter(path);
-
-        try {
-            Iterator<Medicine> iterator = inventory.iterator();
-            while (iterator.hasNext()) {
-                Medicine medicine = iterator.next();
-                String price = medicine.getPrice() +"";
-                String quantity = medicine.getQuantity() + "";
-                bw.write(String.format("%s;\t%s;\t%s",
-                        medicine.getName(), price, quantity));
-                bw.newLine();
-            }
-        } finally {
-            if (bw!=null) {
-                bw.close();
-            }
+        if (qtyChangeCount>5) {
+            updateInventory();
+            qtyChangeCount=0;
         }
     }
 }

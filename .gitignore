@@ -26,3 +26,6 @@ hs_err_pid*
 .idea/
 Medicine/Medicine.iml
 Medicine/out
+
+# Specific files
+Medicine/LogFiles/*.txt

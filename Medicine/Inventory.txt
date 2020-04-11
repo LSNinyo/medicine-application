@@ -1,4 +1,0 @@
-Nurofen;	2.89;	3
-Paracetamol Aldi;	0.69;	7
-Ibuprofen Aldi;	0.59;	0
-Analgin 500mg Sopharma;	1.5;	2

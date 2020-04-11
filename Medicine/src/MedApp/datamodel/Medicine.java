@@ -1,5 +1,17 @@
 package MedApp.datamodel;
 
+/**
+ * @author Lyudmil Ninyo
+ * @version 02-04-2020
+ * A simple class that defines the Medicine data object. It has
+ * 3 field variables: name (String), price (double) and quantity
+ * (int). It also has constructor, getters and setters for each
+ * of the fields. It additionally has an increaseQuantity(int amount)
+ * and decreaseQuantity(int amount) methods.
+ *
+ * Note that there are no restrictions on the price and quantity,
+ * meaning that they can be negative numbers.
+ */
 public class Medicine {
 
     private String name;
