@@ -1,7 +1,5 @@
-package MedApp;
+package medNin.ui;
 
-import MedApp.datamodel.InventoryData;
-import MedApp.datamodel.Medicine;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -11,6 +9,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import medNin.datamodel.InventoryData;
+import medNin.datamodel.Medicine;
+import medNin.main.Application;
+import medNin.settings.Settings;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -51,10 +53,6 @@ public class ControllerMain {
     private Label basketLabel;
     @FXML
     private Label totalLabel;
-    @FXML
-    private Button newButton;
-    @FXML
-    private Button clearBasketButton;
 
     private Application app = new Application();
 
@@ -89,6 +87,22 @@ public class ControllerMain {
         wantAllMedicine = medicine -> true;
 
         setUpMedicineList();
+    }
+
+    /**
+     * Filters the list so that it shows all the medicine. It then populates
+     * the medicineListView with the filtered list. It then also creates a
+     * cell factory that listens for changes in the medicine and paints the
+     * medicine red if the quantity is 0.
+     */
+    private void setUpMedicineList() {
+        ObservableList<Medicine> obsInventory = FXCollections.observableArrayList();
+        obsInventory.addAll(InventoryData.getInstance().getInventory());
+        searchList = new FilteredList<Medicine>(obsInventory, wantAllMedicine);
+
+        medicineListView.setItems(searchList);
+        medicineListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        medicineListView.getSelectionModel().selectFirst();
 
         // cell factory
         medicineListView.setCellFactory(new Callback<ListView<Medicine>, ListCell<Medicine>>() {
@@ -116,18 +130,6 @@ public class ControllerMain {
                 return cell;
             }
         });
-    }
-
-    /**
-     * Filters the list so that it shows all the medicine. It then populates
-     * the medicineListView with the filtered list.
-     */
-    private void setUpMedicineList() {
-        searchList = new FilteredList<Medicine>(InventoryData.getInstance().getInventory(), wantAllMedicine);
-
-        medicineListView.setItems(searchList);
-        medicineListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        medicineListView.getSelectionModel().selectFirst();
     }
 
     @FXML
@@ -271,7 +273,7 @@ public class ControllerMain {
         dialog.initOwner(borderPane.getScene().getWindow());
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("MedDialog.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("/MedDialog.fxml"));
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
         } catch(IOException e) {
@@ -284,6 +286,7 @@ public class ControllerMain {
 
     public void sendNewMed(Medicine newMed) {
         app.addNewMedicine(newMed);
+        setUpMedicineList();
         medicineListView.getSelectionModel().select(newMed);
     }
 
@@ -294,7 +297,7 @@ public class ControllerMain {
         dialog.initOwner(borderPane.getScene().getWindow());
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("MedDialog.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("/MedDialog.fxml"));
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
         } catch(IOException e) {
@@ -305,14 +308,38 @@ public class ControllerMain {
         dialogController.displayEditDialog(this, dialog, medicineListView.getSelectionModel().getSelectedItem());
     }
 
+
     public void editMedicine(Medicine editedMed) {
         Medicine oldMed = medicineListView.getSelectionModel().getSelectedItem();
         app.editMedicine(oldMed, editedMed);
     }
 
     @FXML
+    public void showNewPathDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        // specifies the owner of the dialog - the top-level window
+        dialog.initOwner(borderPane.getScene().getWindow());
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("/PathDialog.fxml"));
+        try {
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+        } catch(IOException e) {
+            System.out.println("Couldn't load dialog: " + e.getMessage());
+        }
+
+        DialogController dialogController = fxmlLoader.getController();
+        dialogController.displayPathDialog(this, dialog);
+    }
+
+    public void editLogFolderPath(String path) {
+        Settings.savePath(path);
+    }
+
+    @FXML
     public void deleteMed() {
         raiseDeleteConfirmationAlert();
+        setUpMedicineList();
     }
 
     /**

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="medNin.ui.DialogController" stylesheets="@main/resources/styles.css"
+            styleClass="dialog">
+
+    <header>
+        <Text textAlignment="CENTER" fx:id="headerText" id="dialog"/>
+    </header>
+
+    <content>
+
+        <GridPane hgap="15" vgap="7" id="dialog">
+            <HBox GridPane.rowIndex="0" GridPane.columnSpan="2">
+                <Separator HBox.hgrow="ALWAYS" styleClass="separator"/>
+                <padding>
+                    <Insets bottom="5"/>
+                </padding>
+            </HBox>
+            <Label text="Folder path:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="pathField" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                       styleClass="text-fields-dialog"/>
+        </GridPane>
+    </content>
+
+</DialogPane>

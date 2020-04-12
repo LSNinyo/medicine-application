@@ -1,14 +1,21 @@
-package MedApp.datamodel;
+package medNin.datamodel;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import medNin.settings.Settings;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
+
+/**
+ * @author Lyudmil Ninyo
+ * @version 12-04-20
+ *
+ * A singleton class that stores the medicine inventory.
+ */
 public class InventoryData {
 
     private static InventoryData instance = new InventoryData();
-    private ObservableList<Medicine> inventory = FXCollections.observableArrayList();
+    private ArrayList<Medicine> inventory = new ArrayList<>();
     // The quantities of the medicines stored in toBeUpdated are the
     // amounts which should be incremented!
     private ArrayList<Medicine> toBeUpdated = new ArrayList<>();
@@ -19,8 +26,32 @@ public class InventoryData {
         return instance;
     }
 
-    public ObservableList<Medicine> getInventory() {
+    public ArrayList<Medicine> getInventory() {
         return inventory;
+    }
+
+    /**
+     * Constructor. This method checks if the Settings are all
+     * set up. If not it asks the user, through the terminal to
+     * input the path where the app's data folder is going to
+     * reside. It then calls for the settings to set up and
+     * for the DB to set up.
+     *
+     * The choice for a terminal input was there since there is
+     * not usual installer and this way it is much easier. It will
+     * require for a more savvy person to set up the app for a
+     * non-savvy user, but it won't be too hard.
+     */
+    private InventoryData() {
+        if (!Settings.checkIfSetUp()) {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Please provide the path for the app's data folder. "+
+                    "It should look something like C:\\Program Files. ");
+            String path = sc.nextLine();
+
+            Settings.initialSetUp(path);
+            Database.initialSetUp();
+        }
     }
 
 
@@ -30,10 +61,7 @@ public class InventoryData {
      * increases its quantity.
      */
     public void addMedicine(Medicine newMedicine) {
-        Medicine correspondingMedicine = inInventory(newMedicine);
-        if (correspondingMedicine != null) {
-            correspondingMedicine.increaseQuantity(newMedicine.getQuantity());
-        } else {
+        if (!increaseQuantity(newMedicine, newMedicine.getQuantity())) {
             inventory.add(newMedicine);
             Database.insertMed(newMedicine);
         }
@@ -47,9 +75,15 @@ public class InventoryData {
         Database.deleteMed(medicine);
     }
 
+    /**
+     * Decreases the quantity of this medicine's version in the
+     * inventory by the amount provided. It also passes it to the
+     * toBeUpdated list.
+     */
     public boolean decreaseQuantity(Medicine medicine, int amount) {
-        if (inInventory(medicine) != null && medicine.getQuantity()>=amount) {
-            medicine.decreaseQuantity(amount);
+        Medicine invVersion = inListOfMedicines(medicine, inventory);
+        if (invVersion != null && medicine.getQuantity()>=amount) {
+            invVersion.decreaseQuantity(amount);
 
             addToUpdate(new Medicine(medicine.getName(), medicine.getPrice(), -amount));
             updateQtyCount();
@@ -59,9 +93,15 @@ public class InventoryData {
         }
     }
 
+    /**
+     * Increases the quantity of this medicine's version in the
+     * inventory by the amount provided. It also passes it to the
+     * toBeUpdated list.
+     */
     public boolean increaseQuantity(Medicine medicine, int amount) {
-        if (inInventory(medicine) != null) {
-            medicine.increaseQuantity(amount);
+        Medicine invVersion = inListOfMedicines(medicine, inventory);
+        if (invVersion != null) {
+            invVersion.increaseQuantity(amount);
 
             addToUpdate(new Medicine(medicine.getName(), medicine.getPrice(), amount));
             updateQtyCount();
@@ -71,6 +111,10 @@ public class InventoryData {
         }
     }
 
+    /**
+     * Removes the old medicine from the inventory and adds
+     * the new one.
+     */
     public void editMedicine(Medicine oldMed, Medicine editedMed) {
         removeMedicine(oldMed);
         addMedicine(editedMed);
@@ -102,17 +146,9 @@ public class InventoryData {
      * negative - then the quantity reduces.
      */
     private void addToUpdate(Medicine med) {
-        int upMedIndex = -1;
-        int oldQty=0;
-        for (int i=0; i<toBeUpdated.size(); i++) {
-            Medicine upMed = toBeUpdated.get(i);
-            if (upMed.getName().equals(med.getName())) {
-                upMedIndex = i;
-                oldQty = upMed.getQuantity();
-            }
-        }
-        if (upMedIndex>=0) {
-            toBeUpdated.add(upMedIndex, new Medicine(med.getName(), med.getPrice(), med.getQuantity()+oldQty));
+        Medicine listVersion = inListOfMedicines(med, toBeUpdated);
+        if (listVersion!=null) {
+            listVersion.increaseQuantity(med.getQuantity());
         } else {
             toBeUpdated.add(med);
         }
@@ -123,10 +159,10 @@ public class InventoryData {
      * version of the medicine stored in the inventory. This
      * allows to increment the same medicine from the inventory.
      */
-    private Medicine inInventory(Medicine medicine) {
+    private Medicine inListOfMedicines(Medicine medicine, ArrayList<Medicine> list) {
         Medicine correspondingMedicine = null;
-        if (inventory!=null){
-            for (Medicine med: inventory) {
+        if (list!=null){
+            for (Medicine med: list) {
                 if (med.getName().equals(medicine.getName())) {
                     correspondingMedicine=med;
                 }

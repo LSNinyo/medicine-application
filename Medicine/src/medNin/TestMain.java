@@ -1,23 +1,6 @@
-package MedApp;
+package medNin;
 
-import MedApp.datamodel.DailyLog;
-import MedApp.datamodel.Medicine;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
+import java.util.Scanner;
 
 public class TestMain {
 
@@ -40,9 +23,9 @@ public class TestMain {
 //        DecimalFormat format = new DecimalFormat("0.00");
 //        System.out.println(format.format(randomPrice));
 
-        DailyLog.getInstance().addToSoldList(new Medicine("B", 2.3, 4));
-        DailyLog.getInstance().printList();
-        DailyLog.getInstance().writeToFile();
+//        DailyLog.getInstance().addToSoldList(new Medicine("B", 2.3, 4));
+//        DailyLog.getInstance().printList();
+//        DailyLog.getInstance().writeToFile();
 
 
 //        dlTest.addToSoldList(new Medicine("A", 2.2, 3));
@@ -51,7 +34,9 @@ public class TestMain {
 //        dlTest.addToSoldList(new Medicine("A quite long name", 2.2, 1));
 //        dlTest.writeToFile();
 
-
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        System.out.println(s);
 
     }
 

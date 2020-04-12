@@ -1,8 +1,8 @@
-package MedApp;
+package medNin.main;
 
-import MedApp.datamodel.DailyLog;
-import MedApp.datamodel.InventoryData;
-import MedApp.datamodel.Medicine;
+import medNin.datamodel.DailyLog;
+import medNin.datamodel.InventoryData;
+import medNin.datamodel.Medicine;
 
 import java.util.ArrayList;
 
@@ -10,8 +10,6 @@ public class Application {
 
     private ArrayList<Medicine> basketMedicine = new ArrayList<>();
     private ArrayList<Integer> basketPieces = new ArrayList<>();
-
-    private double totalAmountValue = 0;
 
     public Application () {
 

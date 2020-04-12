@@ -1,4 +1,4 @@
-package MedApp.datamodel;
+package medNin.datamodel;
 
 /**
  * @author Lyudmil Ninyo

@@ -1,10 +1,10 @@
-package MedApp;
+package medNin.ui;
 
-import MedApp.datamodel.Medicine;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import medNin.datamodel.Medicine;
 
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ public class DialogController {
     @FXML
     private Spinner<Integer> quantitySpinner;
     @FXML
-    private ButtonType buttonCancel;
+    private TextField pathField;
 
     private static final String NOT_ENOUGH_INFO_ALERT_MESSAGE =
             "You have not provided information for all of the fields.";
@@ -35,7 +35,7 @@ public class DialogController {
      * Displays the new medicine dialog.
      */
     public void displayNewMedDialog(ControllerMain controller, Dialog<ButtonType> dialog) {
-        dialog.setTitle("Add new medicine");
+        dialog.setTitle("File > New");
         headerText.setText("Please specify the medicine you want to add");
 
         controllerMain=controller;
@@ -44,7 +44,7 @@ public class DialogController {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         dialog.getDialogPane().getStylesheets().add(
-                "MedApp/styles.css");
+                "/styles.css");
         dialog.getDialogPane().lookupButton(ButtonType.OK).getStyleClass().add("button1");
         dialog.getDialogPane().lookupButton(ButtonType.CANCEL).getStyleClass().add("button1");
 
@@ -65,7 +65,7 @@ public class DialogController {
      * medicine filled in.
      */
     public void displayEditDialog(ControllerMain controller, Dialog<ButtonType> dialog, Medicine medicine) {
-        dialog.setTitle("Edit " + medicine.getName());
+        dialog.setTitle("File > Edit " + medicine.getName());
         headerText.setText("Please edit the medicine values");
 
         controllerMain=controller;
@@ -78,7 +78,7 @@ public class DialogController {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         dialog.getDialogPane().getStylesheets().add(
-                "MedApp/styles.css");
+                "/styles.css");
         dialog.getDialogPane().lookupButton(ButtonType.OK).getStyleClass().add("button1");
         dialog.getDialogPane().lookupButton(ButtonType.CANCEL).getStyleClass().add("button1");
 
@@ -89,7 +89,33 @@ public class DialogController {
         Optional<ButtonType> result = dialog.showAndWait();
     }
 
-    public Medicine processInput() {
+    public void displayPathDialog(ControllerMain controller, Dialog<ButtonType> dialog) {
+        dialog.setTitle("Settings > Change log folder");
+        headerText.setText("Please specify the folder where you want your Daily Log files saved");
+
+        controllerMain=controller;
+
+        // not just add buttons and listen but actually display the dialog with .showAndWait()
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        dialog.getDialogPane().getStylesheets().add(
+                "/styles.css");
+        dialog.getDialogPane().lookupButton(ButtonType.OK).getStyleClass().add("button1");
+        dialog.getDialogPane().lookupButton(ButtonType.CANCEL).getStyleClass().add("button1");
+
+        final Button btOK = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        btOK.addEventFilter(ActionEvent.ACTION, actionEvent -> {
+            String folderPath = processPathInput();
+            if (folderPath!=null) {
+                controller.editLogFolderPath(folderPath);
+            } else {
+                actionEvent.consume();
+            }
+        });
+        Optional<ButtonType> result = dialog.showAndWait();
+    }
+
+    private Medicine processInput() {
         String medName = medNameField.getText();
         Integer quantity = quantitySpinner.getValue();
         double price;
@@ -107,6 +133,16 @@ public class DialogController {
             raiseInvalidSaveAttemptAlert(NOT_ENOUGH_INFO_ALERT_MESSAGE);
         }
         return null;
+    }
+
+    private String processPathInput() {
+        String path = pathField.getText();
+        if (!path.isEmpty()) {
+            return path;
+        } else {
+            raiseInvalidSaveAttemptAlert(NOT_ENOUGH_INFO_ALERT_MESSAGE);
+            return null;
+        }
     }
 
     private void raiseInvalidSaveAttemptAlert(String reason) {

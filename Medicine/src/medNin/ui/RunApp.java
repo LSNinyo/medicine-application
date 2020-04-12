@@ -1,22 +1,24 @@
-package MedApp;
+package medNin.ui;
 
-import MedApp.datamodel.DailyLog;
-import MedApp.datamodel.InventoryData;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import medNin.datamodel.DailyLog;
+import medNin.datamodel.InventoryData;
 
-import java.io.IOException;
 
-public class Main extends Application {
+public class RunApp extends Application {
 
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
+        FXMLLoader fxmlloader = new FXMLLoader();
+        fxmlloader.setLocation(getClass().getResource(
+                "/mainWindow.fxml"));
+        Parent root = fxmlloader.load();
         primaryStage.setTitle("Medicine App");
         primaryStage.setScene(new Scene(root, 1400, 700));
         primaryStage.show();
@@ -35,5 +37,6 @@ public class Main extends Application {
     @Override
     public void stop() {
         InventoryData.getInstance().updateInventory();
+        DailyLog.getInstance().writeToFile();
     }
 }

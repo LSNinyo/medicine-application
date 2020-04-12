@@ -4,5 +4,8 @@ module Medicine {
     requires javafx.graphics;
     requires java.sql;
 
-    opens MedApp;
+    exports medNin.ui to javafx.fxml, javafx.graphics;
+
+    opens medNin;
+    opens medNin.ui to javafx.fxml, javafx.graphics;
 }

@@ -1,7 +1,8 @@
-package MedApp.datamodel;
+package medNin.datamodel;
+
+import medNin.settings.Settings;
 
 import java.io.*;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 /**
@@ -27,15 +27,11 @@ public class DailyLog {
 
     private static DailyLog instance = new DailyLog();
     private String logFilePathStr;
-    private Path logFilesDirPath;
     private ArrayList<Medicine> soldList = new ArrayList<>();
 
     private int additionCounter;
 
     private static final int ADDITIONS_PER_WRITE = 10;
-
-    private static final Path SETTINGS_PATH = FileSystems.getDefault().getPath("Settings",
-            "Settings.properties");
 
     private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd-MM-yy");
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
@@ -50,10 +46,10 @@ public class DailyLog {
      * for today. If there isn't it creates one.
      */
     private DailyLog() {
-        String dirPathString = getDirPath();
+        String dirPathString = Settings.getLogPath();
         LocalDate today = LocalDate.now();
         logFilePathStr = dirPathString +"\\"+today.format(DTF) + FILE_NAME_SUFFIX;
-
+        Path logFilesDirPath = FileSystems.getDefault().getPath(dirPathString);
 
 //        Path filePath = FileSystems.getDefault().getPath(dirPathString, fileName);
         try (Stream<Path> walk = Files.walk(logFilesDirPath)) {
@@ -105,25 +101,6 @@ public class DailyLog {
         return -1;
     }
 
-    private String getDirPath() {
-        File settingsFile = new File("Settings\\Settings.properties");
-        String dirPathString = "";
-
-        try (FileInputStream input = new FileInputStream(settingsFile)) {
-            Properties prop = new Properties();
-            prop.load(input);
-
-            // !!! PRODUCTION - IN THE LAST ITERATION THE SETTINGS MAY BE SAVED SOMEWHERE ELSE
-            logFilesDirPath = FileSystems.getDefault().getPath(prop.getProperty("logFilesDirectoryPath"));
-            dirPathString = prop.getProperty("logFilesDirectoryPath");
-
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("settings file not found: "+fnfe.getMessage());
-        } catch (IOException ioe) {
-            System.out.println(ioe.getMessage());
-        }
-        return dirPathString;
-    }
 
     /**
      * Loads file using the logFilePath field variable. It populates the

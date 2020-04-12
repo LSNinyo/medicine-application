@@ -1,4 +1,6 @@
-package MedApp.datamodel;
+package medNin.datamodel;
+
+import medNin.settings.Settings;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,10 +26,17 @@ import java.util.ArrayList;
  */
 public class Database {
 
+    public static final String DB_NAME = "med.db";
     public static final String CONNECTION_STRING =
-            "jdbc:sqlite:D:med.db";
+            "jdbc:sqlite:" + Settings.getDBPath() + "\\" + DB_NAME;;
     public static final String MED_TABLE = "Medicines";
     public static final String INV_TABLE = "Inventory";
+
+    public static final String CREATE_MED_TABLE =
+            "CREATE TABLE " + MED_TABLE + "(Name TEXT NOT NULL PRIMARY KEY, Price REAL NOT NULL);";
+    public static final String CREATE_INV_TABLE =
+            "CREATE TABLE " + INV_TABLE + "(MedName TEXT NOT NULL UNIQUE, Quantity INTEGER, " +
+                    "FOREIGN KEY (MedName) REFERENCES Medicines(Name));";
 
     public static final String QUERY_BOTH_TABLES =
             "SELECT "+MED_TABLE+".Name AS name, "+MED_TABLE+".Price AS price, "+
@@ -57,6 +66,11 @@ public class Database {
      * the calling method.
      */
     public static ArrayList<Medicine> load() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         ArrayList<Medicine> inventory = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              Statement statement = conn.createStatement()) {
@@ -65,10 +79,6 @@ public class Database {
             ResultSet results = statement.getResultSet();
 
             while(results.next()) {
-//                System.out.println(results.getString("name") + " "+
-//                        results.getDouble("price") + " " +
-//                        results.getInt("quantity"));
-
                 inventory.add(new Medicine(results.getString("name"), results.getDouble("price"),
                         results.getInt("quantity")));
             }
@@ -152,6 +162,24 @@ public class Database {
             updateInvPrepStm.executeUpdate();
         } catch (SQLException sqle) {
             System.out.println("Error editing medicine in DB: "+sqle.getMessage());
+        }
+    }
+
+    /**
+     * This method sets up the the database so that it can
+     * be used later. It creates two tables: Medicines and
+     * Inventory. Medicines has two attributes: Name (Primary key)
+     * and Price. Inventory has MedName (Foreign Key) and
+     * quantity.
+     */
+    public static void initialSetUp() {
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             Statement createMedicines = conn.createStatement();
+             Statement createInventory = conn.createStatement()) {
+            createMedicines.execute(CREATE_MED_TABLE);
+            createInventory.execute(CREATE_INV_TABLE);
+        } catch (SQLException sqle) {
+            System.out.println("Error creating tables!");
         }
     }
 }
